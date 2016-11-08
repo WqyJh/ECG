@@ -8,10 +8,22 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <attr name="lineColor" format="color"/>
+    <attr name="lineWidth" format="dimension"/>
+    <attr name="horizontalScales" format="integer" />
+    <attr name="verticalScales" format="integer" />
+
     <declare-styleable name="BackgroundView">
-        <attr name="horizontalColumns" format="integer"/>
-        <attr name="verticleColumns" format="integer"/>
-        <attr name="lineColor" format="color"/>
-        <attr name="lineWidth" format="dimension"/>
+        <attr name="horizontalColumns" format="integer" />
+        <attr name="verticleColumns" format="integer" />
+        <attr name="lineColor" />
+        <attr name="lineWidth" />
+    </declare-styleable>
+
+    <declare-styleable name="ECGView">
+        <attr name="lineColor" />
+        <attr name="lineWidth" />
+        <attr name="horizontalScales" />
+        <attr name="verticalScales"/>
     </declare-styleable>
 </resources>

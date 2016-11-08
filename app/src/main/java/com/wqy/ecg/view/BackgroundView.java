@@ -45,6 +45,7 @@ public class BackgroundView extends View {
         linePaint = new Paint();
         linePaint.setStrokeWidth(lineWidth);
         linePaint.setColor(lineColor);
+        a.recycle();
     }
 
     @Override
