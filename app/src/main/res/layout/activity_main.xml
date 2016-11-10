@@ -12,19 +12,33 @@
     tools:context="com.wqy.ecg.MainActivity">
 
     <com.wqy.ecg.view.BackgroundView
-        android:background="@android:color/black"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@android:color/black"
         app:horizontalColumns="6"
         app:lineColor="#00BCD4"
         app:lineWidth="1dp"
         app:verticleColumns="4" />
+
     <com.wqy.ecg.view.ECGView
         android:id="@+id/ecg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:lineWidth="2dp"
-        app:lineColor="#00BCD4"
         app:horizontalScales="600"
-        app:verticalScales="128"/>
+        app:lineColor="#00BCD4"
+        app:lineWidth="2dp"
+        app:verticalScales="128" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/start"
+        android:src="@android:drawable/btn_star"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></android.support.design.widget.CoordinatorLayout>
 </RelativeLayout>

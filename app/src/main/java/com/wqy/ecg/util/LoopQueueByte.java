@@ -53,7 +53,26 @@ public class LoopQueueByte {
         }
     }
 
+    public boolean enqueue(byte[] bytes) {
+        if (bytes == null) {
+            return false;
+        }
+        for (int i = 0, length = bytes.length; i < length; i++) {
+            if (!enqueue(bytes[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 右移动队列的头指针，起到出队并释放容量的作用
+     * @param offset 必须大于0
+     */
     public void offsetFront(int offset) {
+        if (offset < 0) {
+            return;
+        }
         if (offset < size) {
             front = (front + offset) % size;
             size -= offset;
