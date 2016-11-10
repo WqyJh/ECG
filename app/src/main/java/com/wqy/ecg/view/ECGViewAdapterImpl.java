@@ -31,9 +31,11 @@ public class ECGViewAdapterImpl implements ECGViewAdapter {
         }
         loopQueue.enqueue(b);
         int offset = loopQueue.size() - size;
-        if (offset > 50) {
-            loopQueue.offsetFront(offset);
-            ecgView.invalidate();
-        }
+//        if (offset > 10) {
+//            loopQueue.offsetFront(offset);
+//            ecgView.invalidate();
+//        }
+        loopQueue.offsetFront(offset);
+        ecgView.invalidate();
     }
 }

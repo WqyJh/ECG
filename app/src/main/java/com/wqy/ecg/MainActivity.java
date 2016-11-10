@@ -11,6 +11,7 @@ import com.wqy.ecg.view.ECGViewAdapterImpl;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,12 +23,22 @@ public class MainActivity extends AppCompatActivity {
 
         final Handler handler = new Handler();
         Runnable runnable = new Runnable() {
-            Random random = new Random();
+            final double PI2 = Math.PI * 2;
+            final double unit = PI2 / 300;
+            {
+                Log.d(TAG, "instance initializer: unit = " + unit);;
+            }
+            double arc = 0.0;
             @Override
             public void run() {
                 // Send Data
-                byte b = (byte) random.nextInt(256);
+                byte b = (byte) (Math.sin(arc) * 127);
+//                Log.d(TAG, "run: b = " + b);
                 adapter.onReceiveData(b);
+                arc += unit;
+                if (arc >= PI2) {
+                    arc -= PI2;
+                }
                 handler.postDelayed(this, 5);
             }
         };

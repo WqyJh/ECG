@@ -56,6 +56,7 @@ public class LoopQueueByte {
     public void offsetFront(int offset) {
         if (offset < size) {
             front = (front + offset) % size;
+            size -= offset;
         }
     }
 

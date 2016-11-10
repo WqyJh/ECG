@@ -16,15 +16,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:horizontalColumns="6"
-        app:lineColor="@color/colorAccent"
-        app:lineWidth="2dp"
+        app:lineColor="#00BCD4"
+        app:lineWidth="1dp"
         app:verticleColumns="4" />
     <com.wqy.ecg.view.ECGView
         android:id="@+id/ecg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:lineWidth="2dp"
-        app:lineColor="@android:color/holo_green_light"
+        app:lineColor="#00BCD4"
         app:horizontalScales="600"
         app:verticalScales="128"/>
 </RelativeLayout>
