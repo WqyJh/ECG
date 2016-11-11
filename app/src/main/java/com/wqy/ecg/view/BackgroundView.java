@@ -44,6 +44,7 @@ public class BackgroundView extends View {
         lineColor = a.getColor(R.styleable.BackgroundView_lineColor, Color.GREEN);
         linePaint = new Paint();
         linePaint.setStrokeWidth(lineWidth);
+        linePaint.setAntiAlias(true);
         linePaint.setColor(lineColor);
         a.recycle();
     }

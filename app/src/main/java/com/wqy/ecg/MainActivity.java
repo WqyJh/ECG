@@ -1,6 +1,7 @@
 package com.wqy.ecg;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
@@ -9,8 +10,12 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
+import com.wqy.ecg.util.Common;
 import com.wqy.ecg.view.ECGView;
 import com.wqy.ecg.view.ECGViewAdapterImpl;
 
@@ -22,7 +27,7 @@ import app.akexorcist.bluetotohspp.library.DeviceList;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private FloatingActionButton start;
+//    private FloatingActionButton start;
     private ECGView ecgView;
     private ECGViewAdapterImpl adapter;
     private BluetoothSPP bt;
@@ -33,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initViews();
-        initUtils();
+        initBT();
+        createDataServer();
     }
 
     @Override
@@ -41,8 +47,11 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         if (!bt.isBluetoothEnabled()) {
             makeSnackbar("Bluetooth is Disabled!");
+            Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(intent, BluetoothState.REQUEST_ENABLE_BT);
         } else {
-
+            bt.setupService();
+            bt.startService(BluetoothState.DEVICE_OTHER);
         }
     }
 
@@ -62,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (requestCode == BluetoothState.REQUEST_ENABLE_BT) {
             if (resultCode == Activity.RESULT_OK) {
                 bt.setupService();
-                bt.startService(BluetoothState.DEVICE_ANDROID);
+                bt.startService(BluetoothState.DEVICE_OTHER);
 //                setup();
             } else {
                 // Do something if user doesn't choose any device (Pressed back)
@@ -78,11 +87,8 @@ public class MainActivity extends AppCompatActivity {
 
             {
                 Log.d(TAG, "instance initializer: unit = " + unit);
-                ;
             }
-
             double arc = 0.0;
-
             @Override
             public void run() {
                 // Send Data
@@ -99,13 +105,68 @@ public class MainActivity extends AppCompatActivity {
         handler.post(runnable);
     }
 
-    void initUtils() {
+    public String bytesString(byte[] bytes) {
+        if (bytes == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("bytes:[");
+        for (int i = 0, len = bytes.length; i < len; i++) {
+            sb.append(bytes[i]);
+            if (i < len - 1) {
+                sb.append(",");
+            }
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+    void initBT() {
         bt = new BluetoothSPP(MainActivity.this);
-        bt.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() {
+//        bt.setOnByteReceivedListener(new BluetoothSPP.OnByteReceivedListener() {
+//            @Override
+//            public void onByteReceived(int i) {
+//                byte b = Common.intToByte(i);
+//                Log.d(TAG, "onByteReceived: int = " + i);
+//                Log.d(TAG, "onByteReceived: byte = " + b);
+//                adapter.onReceiveData((byte) (i - 128));
+//            }
+//        });
+        bt.setBluetoothConnectionListener(new BluetoothSPP.BluetoothConnectionListener() {
             @Override
-            public void onDataReceived(byte[] bytes, String s) {
-                Log.d(TAG, "onDataReceived: bytes length = " + (bytes == null ? 0 : bytes.length));
-                adapter.onReceiveData(bytes);
+            public void onDeviceConnected(String s, String s1) {
+                makeSnackbar(String.format("Connect to %s@%s", s, s1));
+                Log.d(TAG, "onDeviceConnected: Connected");
+            }
+
+            @Override
+            public void onDeviceDisconnected() {
+                makeSnackbar("Device disconnected");
+                Log.d(TAG, "onDeviceDisconnected: Disconnected");
+            }
+
+            @Override
+            public void onDeviceConnectionFailed() {
+                Log.d(TAG, "onDeviceConnectionFailed: Connect failed");
+                makeSnackbar("Connect failed");
+            }
+        });
+        bt.setBluetoothStateListener(new BluetoothSPP.BluetoothStateListener() {
+            @Override
+            public void onServiceStateChanged(int state) {
+                if (state == BluetoothState.STATE_CONNECTED) {
+                    // Do something when successfully connected
+                    makeSnackbar("Service State Changed: Connected");
+                } else if (state == BluetoothState.STATE_CONNECTING) {
+                    // Do something while connecting
+                    makeSnackbar("Service State Changed: Connecting");
+                } else if (state == BluetoothState.STATE_LISTEN) {
+                    // Do something when device is waiting for connection
+                    makeSnackbar("Service State Changed: Waiting for connection");
+                } else if (state == BluetoothState.STATE_NONE) {
+                    // Do something when device don't have any connection
+                    makeSnackbar("Service State Changed: None Connection");
+                }
             }
         });
     }
@@ -116,13 +177,13 @@ public class MainActivity extends AppCompatActivity {
         ecgView.setAdapter(adapter);
         container = (CoordinatorLayout) findViewById(R.id.container);
 
-        start = (FloatingActionButton) findViewById(R.id.start);
-        start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDevices();
-            }
-        });
+//        start = (FloatingActionButton) findViewById(R.id.start);
+//        start.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showDevices();
+//            }
+//        });
     }
 
     void makeSnackbar(String message) {
@@ -132,5 +193,25 @@ public class MainActivity extends AppCompatActivity {
     void showDevices() {
         Intent intent = new Intent(getApplicationContext(), DeviceList.class);
         startActivityForResult(intent, BluetoothState.REQUEST_CONNECT_DEVICE);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.connect:
+                showDevices();
+                return true;
+            case R.id.disconnect:
+                bt.disconnect();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

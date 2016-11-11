@@ -19,4 +19,13 @@ public class Common {
         }
         return newBytes;
     }
+
+    /**
+     * Convert int range from 0 to 255 to byte.
+     * @param i
+     * @return
+     */
+    public static byte intToByte(int i) {
+        return (byte) (i - 128);
+    }
 }

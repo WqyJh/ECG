@@ -16,7 +16,7 @@
         android:layout_height="match_parent"
         android:background="@android:color/black"
         app:horizontalColumns="6"
-        app:lineColor="#00BCD4"
+        app:lineColor="#607d8b"
         app:lineWidth="1dp"
         app:verticleColumns="4" />
 
@@ -26,16 +26,16 @@
         android:layout_height="match_parent"
         app:horizontalScales="600"
         app:lineColor="#00BCD4"
-        app:lineWidth="2dp"
+        app:lineWidth="1dp"
         app:verticalScales="128" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/start"
-        android:src="@android:drawable/btn_star"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/start"-->
+        <!--android:src="@android:drawable/btn_star"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content" />-->
 
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/container"
