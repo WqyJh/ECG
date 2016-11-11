@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initViews();
         initBT();
-        createDataServer();
+//        createDataServer();
     }
 
     @Override
@@ -123,15 +123,15 @@ public class MainActivity extends AppCompatActivity {
 
     void initBT() {
         bt = new BluetoothSPP(MainActivity.this);
-//        bt.setOnByteReceivedListener(new BluetoothSPP.OnByteReceivedListener() {
-//            @Override
-//            public void onByteReceived(int i) {
-//                byte b = Common.intToByte(i);
-//                Log.d(TAG, "onByteReceived: int = " + i);
-//                Log.d(TAG, "onByteReceived: byte = " + b);
-//                adapter.onReceiveData((byte) (i - 128));
-//            }
-//        });
+        bt.setOnByteReceivedListener(new BluetoothSPP.OnByteReceivedListener() {
+            @Override
+            public void onByteReceived(int i) {
+                byte b = Common.intToByte(i);
+                Log.d(TAG, "onByteReceived: int = " + i);
+                Log.d(TAG, "onByteReceived: byte = " + b);
+                adapter.onReceiveData((byte) (i - 128));
+            }
+        });
         bt.setBluetoothConnectionListener(new BluetoothSPP.BluetoothConnectionListener() {
             @Override
             public void onDeviceConnected(String s, String s1) {
