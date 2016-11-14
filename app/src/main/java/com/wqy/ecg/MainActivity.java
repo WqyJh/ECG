@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         final Handler handler = new Handler();
         Runnable runnable = new Runnable() {
             final double PI2 = Math.PI * 2;
-            final double unit = PI2 / 300;
+            final double unit = PI2 / 200;
 
             {
                 Log.d(TAG, "instance initializer: unit = " + unit);
@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
         return sb.toString();
     }
 
+
     void initBT() {
         bt = new BluetoothSPP(MainActivity.this);
         bt.setOnByteReceivedListener(new BluetoothSPP.OnByteReceivedListener() {
@@ -137,6 +138,14 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     byte b = Common.intToByte(i);
                     adapter.onReceiveData(b);
+                }
+            }
+        });
+        bt.setOnServiceStopListener(new BluetoothSPP.OnServiceStopListener() {
+            @Override
+            public void onServiceStop() {
+                if (adapter != null) {
+                    adapter.reset();
                 }
             }
         });
@@ -164,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
             public void onServiceStateChanged(int state) {
                 if (state == BluetoothState.STATE_CONNECTED) {
                     // Do something when successfully connected
-                    makeSnackbar("Service State Changed: Connected");
+//                    makeSnackbar("Service State Changed: Connected");
                 } else if (state == BluetoothState.STATE_CONNECTING) {
                     // Do something while connecting
                     makeSnackbar("Service State Changed: Connecting");
@@ -184,14 +193,6 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ECGViewAdapterImpl(ecgView);
         ecgView.setAdapter(adapter);
         container = (CoordinatorLayout) findViewById(R.id.container);
-
-//        start = (FloatingActionButton) findViewById(R.id.start);
-//        start.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                showDevices();
-//            }
-//        });
     }
 
     void makeSnackbar(String message) {
@@ -218,7 +219,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.disconnect:
                 bt.stopService();
-                adapter.reset();
                 return true;
         }
         return super.onOptionsItemSelected(item);

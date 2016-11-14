@@ -37,6 +37,7 @@ public class BluetoothSPP {
     private OnByteReceivedListener mByteReceivedListener = null;
     private BluetoothConnectionListener mBluetoothConnectionListener = null;
     private AutoConnectionListener mAutoConnectionListener = null;
+    private OnServiceStopListener mServiceStopListener = null;
 
     // Context from activity which call this class
     private Context mContext;
@@ -98,6 +99,10 @@ public class BluetoothSPP {
         public void onAutoConnectionStarted();
 
         public void onNewConnection(String name, String address);
+    }
+
+    public interface OnServiceStopListener {
+        void onServiceStop();
     }
 
     public boolean isBluetoothAvailable() {
@@ -169,6 +174,9 @@ public class BluetoothSPP {
                 if (mChatService != null) {
                     isServiceRunning = false;
                     mChatService.stop();
+                }
+                if (mServiceStopListener != null) {
+                    mServiceStopListener.onServiceStop();
                 }
             }
         }, 500);
@@ -283,6 +291,10 @@ public class BluetoothSPP {
 
     public void setAutoConnectionListener(AutoConnectionListener listener) {
         mAutoConnectionListener = listener;
+    }
+
+    public void setOnServiceStopListener(OnServiceStopListener listener) {
+        this.mServiceStopListener = listener;
     }
 
     public void enable() {

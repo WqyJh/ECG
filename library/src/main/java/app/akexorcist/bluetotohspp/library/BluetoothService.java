@@ -172,7 +172,6 @@ public class BluetoothService {
 
     // Stop all threads
     public synchronized void stop() {
-        Log.d(TAG, "stop: mConnectedThread: " + mConnectedThread);
         if (mConnectThread != null) {
             mConnectThread.cancel();
             mConnectThread = null;
@@ -439,7 +438,6 @@ public class BluetoothService {
 
         @Override
         public void run() {
-            Log.d(TAG, "run: mConnectedThread: " + mConnectedThread);
             while (true) {
                 try {
                     int data = mmInStream.read();
@@ -450,7 +448,6 @@ public class BluetoothService {
                     break;
                 }
             }
-            Log.d(TAG, "run: mConnectedThread: " + mConnectedThread);
         }
     }
 }

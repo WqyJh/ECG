@@ -17,7 +17,7 @@ public class ECGViewAdapterImpl implements ECGViewAdapter {
 
     public ECGViewAdapterImpl(ECGView ecgView) {
         this.ecgView = ecgView;
-        loopQueue = new LoopQueueByte(2400);
+        loopQueue = new LoopQueueByte(1200);
     }
 
     public ECGViewAdapterImpl(ECGView ecgView, int size) {
@@ -61,5 +61,6 @@ public class ECGViewAdapterImpl implements ECGViewAdapter {
 
     public void reset() {
         this.loopQueue.clear();
+        ecgView.invalidate();
     }
 }
