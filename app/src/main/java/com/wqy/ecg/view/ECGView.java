@@ -86,16 +86,10 @@ public class ECGView extends View {
             float left = originX;
             ListByte list = adapter.getList();
             if (list != null) {
-                float y;
-                byte b;
                 path.rewind();
                 path.moveTo(left, originY - list.get(0) * dHeight);
                 for (int i = 1; i < list.size(); i++) {
                     left += dWidth;
-//                    b = list.get(i);
-//                    y = originY - b * dHeight;
-//                    Log.d(TAG, "onDraw: b = " + list.get(i));
-//                    Log.d(TAG, "onDraw: y = " + y);
                     path.lineTo(left, originY - list.get(i) * dHeight);
                 }
                 canvas.drawPath(path, paint);

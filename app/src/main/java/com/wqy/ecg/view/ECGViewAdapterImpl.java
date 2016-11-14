@@ -1,5 +1,7 @@
 package com.wqy.ecg.view;
 
+import android.util.Log;
+
 import com.wqy.ecg.util.ListByte;
 import com.wqy.ecg.util.LoopQueueByte;
 
@@ -11,12 +13,16 @@ public class ECGViewAdapterImpl implements ECGViewAdapter {
 
     private ECGView ecgView;
     private LoopQueueByte loopQueue;
-    private final int size = 600;
+    private int size = 600;
 
     public ECGViewAdapterImpl(ECGView ecgView) {
         this.ecgView = ecgView;
-        loopQueue = new LoopQueueByte(1200);
+        loopQueue = new LoopQueueByte(2400);
+    }
 
+    public ECGViewAdapterImpl(ECGView ecgView, int size) {
+        this(ecgView);
+        this.size = size;
     }
 
     @Override
@@ -31,24 +37,29 @@ public class ECGViewAdapterImpl implements ECGViewAdapter {
         }
         loopQueue.enqueue(b);
         int offset = loopQueue.size() - size;
+        if (offset > 0) {
+            move(offset);
+        }
 //        if (offset > 10) {
-//            loopQueue.offsetFront(offset);
+//            loopQueue.dequeue(offset);
 //            ecgView.invalidate();
 //        }
-        move(offset);
     }
 
     public void onReceiveData(byte[] bytes) {
         if (loopQueue.isFull()) {
             return;
         }
-        loopQueue.enqueue(bytes);
-        int offset = loopQueue.size() - size;
+        int offset = loopQueue.enqueue(bytes);
         move(offset);
     }
 
     public void move(int offset) {
-        loopQueue.offsetFront(offset);
+        loopQueue.dequeue(offset);
         ecgView.invalidate();
+    }
+
+    public void reset() {
+        this.loopQueue.clear();
     }
 }

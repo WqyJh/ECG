@@ -28,5 +28,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:design:24.2.1'
 //    compile 'com.akexorcist:bluetoothspp:1.0.0'
-    compile(name:'bluetoothspp-1.0.1', ext:'aar')
+    compile project(path: ':library')
 }

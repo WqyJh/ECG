@@ -42,40 +42,46 @@ public class LoopQueueByte {
         return data[i];
     }
 
+    public int offsetPointer(int p, int n) {
+        return (p + n) % capacity;
+    }
+
     public boolean enqueue(byte b) {
         if (isFull()) {
             return false;
         } else {
             data[rear] = b;
-            rear = (rear + 1) % capacity;
+//            rear = (rear + 1) % capacity;
+            rear = offsetPointer(rear, 1);
             size++;
             return true;
         }
     }
 
-    public boolean enqueue(byte[] bytes) {
+    public int enqueue(byte[] bytes) {
         if (bytes == null) {
-            return false;
+            return 0;
         }
         for (int i = 0, length = bytes.length; i < length; i++) {
             if (!enqueue(bytes[i])) {
-                return false;
+                return i;
             }
         }
-        return true;
+        return bytes.length;
     }
 
     /**
-     * 右移动队列的头指针，起到出队并释放容量的作用
-     * @param offset 必须大于0
+     * 队列头n个元素出队
+     * @param n 必须大于0
      */
-    public void offsetFront(int offset) {
-        if (offset < 0) {
+    public void dequeue(int n) {
+        if (n <= 0) {
             return;
         }
-        if (offset < size) {
-            front = (front + offset) % size;
-            size -= offset;
+        if (n < size) {
+//            front = (front + n) % capacity;
+            front = offsetPointer(front, n);
+            size -= n;
         }
     }
 
@@ -89,10 +95,17 @@ public class LoopQueueByte {
             return (byte)0;
         } else {
             byte b = data[front];
-            front++;
+//            front++;
+            front = offsetPointer(front, 1);
             size--;
             return b;
         }
+    }
+
+    public void clear() {
+        front = 0;
+        rear = 0;
+        size = 0;
     }
 
 //    public ListByte subList(int fromIndex, int toIndex) {
