@@ -72,6 +72,8 @@ public class LoopQueueTest {
 //        expected = source;
         source = getList() == null ? null : getList().toBytes();
         if (source != null && expected != null) {
+            assertEquals(SIZE, source.length);
+            assertEquals(SIZE, expected.length);
             assertListByteEquals(expected, 1, SIZE - 1,
                     source, 0);
             signal.countDown();
