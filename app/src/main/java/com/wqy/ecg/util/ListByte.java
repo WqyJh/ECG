@@ -7,4 +7,5 @@ package com.wqy.ecg.util;
 public interface ListByte {
     byte get(int index);
     int size();
+    byte[] toBytes();
 }
