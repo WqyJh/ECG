@@ -28,6 +28,10 @@ public class ECGViewAdapterImpl2 extends ECGViewAdapterImpl {
         handler.post(refresh);
     }
 
+    /**
+     * Get SubList from the tail of the loopQueue.
+     * @return
+     */
     @Override
     public ListByte getList() {
         int listSize = loopQueue.size();
