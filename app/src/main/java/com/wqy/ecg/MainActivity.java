@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import com.wqy.ecg.util.Common;
 import com.wqy.ecg.view.ECGView;
 import com.wqy.ecg.view.ECGViewAdapterImpl;
+import com.wqy.ecg.view.ECGViewAdapterImpl2;
 
 import app.akexorcist.bluetotohspp.library.BluetoothSPP;
 import app.akexorcist.bluetotohspp.library.BluetoothState;
@@ -190,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
 
     void initViews() {
         ecgView = (ECGView) findViewById(R.id.ecg);
-        adapter = new ECGViewAdapterImpl(ecgView);
+        adapter = new ECGViewAdapterImpl2(ecgView);
         ecgView.setAdapter(adapter);
         container = (CoordinatorLayout) findViewById(R.id.container);
     }

@@ -79,24 +79,43 @@ public class ECGView extends View {
         }
     }
 
+//    @Override
+//    protected void onDraw(Canvas canvas) {
+//        super.onDraw(canvas);
+//        if (adapter != null) {
+//            path.rewind();
+//            float left = originX;
+//            ListByte list = adapter.getList();
+//            Log.d(TAG, "onDraw: " + (list == null ? 0 : list.size()));
+//            if (list != null) {
+//                path.moveTo(left, originY - list.get(0) * dHeight);
+//                for (int i = 1; i < list.size(); i++) {
+//                    left += dWidth;
+//                    path.lineTo(left, originY - list.get(i) * dHeight);
+//                }
+//                canvas.drawPath(path, paint);
+//            }
+//        }
+//    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        path.rewind();
         if (adapter != null) {
-            float left = originX;
             ListByte list = adapter.getList();
-            Log.d(TAG, "onDraw: " + (list == null ? 0 : list.size()));
             if (list != null) {
-                path.moveTo(left, originY - list.get(0) * dHeight);
+                byte last = list.get(0);
+                float left = 0;
                 for (int i = 1; i < list.size(); i++) {
+                    byte b = list.get(i);
+                    canvas.drawLine(left, originY - last * dHeight, left + dWidth, originY - b * dHeight, paint);
                     left += dWidth;
-                    path.lineTo(left, originY - list.get(i) * dHeight);
+                    last = b;
                 }
-                canvas.drawPath(path, paint);
             }
         }
     }
+
 
 //
 //    final byte[] datas = {0, 64, 127, 64, 0, -64, -128, -64, 0};

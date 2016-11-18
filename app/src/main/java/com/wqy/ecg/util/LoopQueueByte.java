@@ -119,7 +119,7 @@ public class LoopQueueByte {
         if (size == 0) {
             return null;
         }
-        if (fromIndex < 0 || fromIndex >= size || size > this.size) {
+        if (fromIndex < 0 || fromIndex >= this.capacity || size > this.size) {
             throw new IndexOutOfBoundsException(String.format("LoopQueueByte: subList fromIndex = %d, size = %d", fromIndex, size));
         }
         return new SubList(this, fromIndex, size);

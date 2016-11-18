@@ -11,18 +11,22 @@ import com.wqy.ecg.util.LoopQueueByte;
 
 public class ECGViewAdapterImpl implements ECGViewAdapter {
 
-    private ECGView ecgView;
-    private LoopQueueByte loopQueue;
-    private int size = 600;
+    protected ECGView ecgView;
+    protected LoopQueueByte loopQueue;
+    protected int size = 600;
+    protected static final int QUEUE_SIZE = 2400;
 
     public ECGViewAdapterImpl(ECGView ecgView) {
-        this.ecgView = ecgView;
-        loopQueue = new LoopQueueByte(1200);
+        this(ecgView, 0);
+
     }
 
     public ECGViewAdapterImpl(ECGView ecgView, int size) {
-        this(ecgView);
-        this.size = size;
+        this.ecgView = ecgView;
+        loopQueue = new LoopQueueByte(QUEUE_SIZE);
+        if (size > 0) {
+            this.size = size;
+        }
     }
 
     @Override
