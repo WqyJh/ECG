@@ -109,7 +109,7 @@ public class LoopQueueByte {
     }
 
 //    public ListByte subList(int fromIndex, int toIndex) {
-//        if (fromIndex < 0 || fromIndex >= size || toIndex < 0 || toIndex >= size) {
+//        if (fromIndex < 0 || fromIndex >= drawSize || toIndex < 0 || toIndex >= drawSize) {
 //            throw new IndexOutOfBoundsException("LoopQueueByte: subList");
 //        }
 //        return new SubList(this, fromIndex, toIndex - fromIndex + 1);
@@ -120,7 +120,7 @@ public class LoopQueueByte {
             return null;
         }
         if (fromIndex < 0 || fromIndex >= this.capacity || size > this.size) {
-            throw new IndexOutOfBoundsException(String.format("LoopQueueByte: subList fromIndex = %d, size = %d", fromIndex, size));
+            throw new IndexOutOfBoundsException(String.format("LoopQueueByte: subList fromIndex = %d, drawSize = %d", fromIndex, size));
         }
         return new SubList(this, fromIndex, size);
     }
