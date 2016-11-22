@@ -35,15 +35,15 @@ public class ECGViewAdapterImpl2 extends ECGViewAdapterImpl {
      * Get SubList from the tail of the loopQueue.
      * @return
      */
-//    @Override
-//    public ListByte getList() {
-//        int listSize = loopQueue.drawSize();
-//        if (listSize > drawSize) {
-//            return loopQueue.subList(listSize - drawSize, drawSize);
-//        } else {
-//            return loopQueue.subList(0, listSize);
-//        }
-//    }
+    @Override
+    public ListByte getList() {
+        int listSize = loopQueue.size();
+        if (listSize > drawSize) {
+            return loopQueue.subList(listSize - drawSize, drawSize);
+        } else {
+            return loopQueue.subList(0, listSize);
+        }
+    }
 
     @Override
     public void onReceiveData(byte b) {

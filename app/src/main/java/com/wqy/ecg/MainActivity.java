@@ -82,10 +82,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void handleData() {
-        // TODO: 16-11-13
-    }
-
     void createDataServer() {
         final Handler handler = new Handler();
         Runnable runnable = new Runnable() {
@@ -111,23 +107,6 @@ public class MainActivity extends AppCompatActivity {
         };
         handler.post(runnable);
     }
-
-    public String bytesString(byte[] bytes) {
-        if (bytes == null) {
-            return "";
-        }
-        StringBuilder sb = new StringBuilder();
-        sb.append("bytes:[");
-        for (int i = 0, len = bytes.length; i < len; i++) {
-            sb.append(bytes[i]);
-            if (i < len - 1) {
-                sb.append(",");
-            }
-        }
-        sb.append("]");
-        return sb.toString();
-    }
-
 
     void initBT() {
         bt = new BluetoothSPP(MainActivity.this);
