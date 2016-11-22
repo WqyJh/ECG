@@ -5,6 +5,8 @@ package com.wqy.ecg.util;
  */
 
 public abstract class HeartRateProtocol {
+    public static final int HEART_RATE = 1;
+    public static final int OTHER_DATA = 2;
     protected OnReturnDataCallback onReturnDataCallback = null;
 
     public HeartRateProtocol(OnReturnDataCallback callback) {
@@ -12,6 +14,8 @@ public abstract class HeartRateProtocol {
     }
 
     public abstract boolean isHeartRate(int i);
+
+    public abstract void checkData(int input);
 
     public void setOnReturnDataCallback(OnReturnDataCallback callback) {
         this.onReturnDataCallback = callback;
@@ -24,6 +28,6 @@ public abstract class HeartRateProtocol {
          * @param data1
          * @param data2
          */
-        void onData(int data1, int data2);
+        void onData(int type, int data1, int data2);
     }
 }

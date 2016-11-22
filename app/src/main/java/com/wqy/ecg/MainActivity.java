@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         initViews();
         initBT();
         initUtils();
-        createDataServer();
+//        createDataServer();
     }
 
     @Override
@@ -128,31 +128,29 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         handler.post(runnable);
-
     }
 
     private void handleData(int i) {
         if (i < 0) {
             ecgViewAdapter.onReceiveData((byte) 0);
         } else {
-            if (protocol.isHeartRate(i)) {
-                heartRateView.setText(String.valueOf(i));
-            } else {
-                byte b = intToByte(i);
-                ecgViewAdapter.onReceiveData(b);
-            }
+            protocol.checkData(i);
         }
     }
 
     void initUtils() {
         protocol = new HeartRateProtocolImpl(new HeartRateProtocol.OnReturnDataCallback() {
             @Override
-            public void onData(int data1, int data2) {
-                if (data1 > -1) {
-                    ecgViewAdapter.onReceiveData(intToByte(data1));
-                }
-                if (data2 > -1) {
-                    ecgViewAdapter.onReceiveData(intToByte(data2));
+            public void onData(int type, int data1, int data2) {
+                if (type == HeartRateProtocol.HEART_RATE) {
+                    heartRateView.setText(String.valueOf(data1));
+                } else if (type == HeartRateProtocol.OTHER_DATA) {
+                    if (data1 > -1) {
+                        ecgViewAdapter.onReceiveData(intToByte(data1));
+                    }
+                    if (data2 > -1) {
+                        ecgViewAdapter.onReceiveData(intToByte(data2));
+                    }
                 }
             }
         });

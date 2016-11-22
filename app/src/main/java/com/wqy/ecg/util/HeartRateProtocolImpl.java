@@ -24,6 +24,32 @@ public class HeartRateProtocolImpl extends HeartRateProtocol {
     }
 
     @Override
+    public void checkData(int input) {
+        if (flag1 && flag2) {
+            onReturnDataCallback.onData(HEART_RATE, input, -1);
+            reset();
+            return;
+        }
+        if (flag1) {
+            if (input == 255) {
+                flag2 = true;
+            } else {
+                onReturnDataCallback.onData(OTHER_DATA, 0, input);
+                reset();
+                return;
+            }
+        } else {
+            if (input == 0) {
+                flag1 = true;
+                flag2 = false;
+            } else {
+                onReturnDataCallback.onData(OTHER_DATA, input, -1);
+            }
+        }
+
+    }
+
+    @Override
     public boolean isHeartRate(int i) {
         if (flag1 && flag2) {
             reset();
@@ -35,7 +61,7 @@ public class HeartRateProtocolImpl extends HeartRateProtocol {
                 flag2 = true;
             } else {
                 if (onReturnDataCallback != null) {
-                    onReturnDataCallback.onData(stack[0], -1);
+                    onReturnDataCallback.onData(OTHER_DATA, stack[0], -1);
                 }
                 reset();
             }
