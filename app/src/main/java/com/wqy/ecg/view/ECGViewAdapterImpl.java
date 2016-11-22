@@ -22,7 +22,9 @@ public class ECGViewAdapterImpl implements ECGViewAdapter {
 
     public ECGViewAdapterImpl(ECGView ecgView, int size) {
         this(ecgView);
-        this.size = size;
+        if (size > 0) {
+            this.size = size;
+        }
     }
 
     @Override

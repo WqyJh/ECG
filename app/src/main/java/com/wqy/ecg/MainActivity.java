@@ -4,22 +4,31 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.wqy.ecg.util.Common;
+import com.wqy.ecg.util.HeartRateProtocol;
+import com.wqy.ecg.util.HeartRateProtocolImpl;
 import com.wqy.ecg.view.ECGView;
 import com.wqy.ecg.view.ECGViewAdapterImpl;
+
+import java.util.Random;
 
 import app.akexorcist.bluetotohspp.library.BluetoothSPP;
 import app.akexorcist.bluetotohspp.library.BluetoothState;
 import app.akexorcist.bluetotohspp.library.DeviceList;
+
+import static com.wqy.ecg.util.Common.intToByte;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -29,9 +38,11 @@ public class MainActivity extends AppCompatActivity {
 
 //    private FloatingActionButton start;
     private ECGView ecgView;
-    private ECGViewAdapterImpl adapter;
+    private ECGViewAdapterImpl ecgViewAdapter;
     private BluetoothSPP bt;
     private CoordinatorLayout container;
+    private HeartRateProtocol protocol;
+    private TextView heartRateView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initViews();
         initBT();
-//        createDataServer();
+        initUtils();
+        createDataServer();
     }
 
     @Override
@@ -81,72 +93,86 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void handleData() {
-        // TODO: 16-11-13
-    }
-
+    static final int TEST_DATA = 100;
     void createDataServer() {
-        final Handler handler = new Handler();
+        final Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                if (msg.what == TEST_DATA) {
+                    handleData(msg.arg1);
+                }
+            }
+        };
         Runnable runnable = new Runnable() {
             final double PI2 = Math.PI * 2;
             final double unit = PI2 / 200;
+            Random r = new Random();
 
-            {
-                Log.d(TAG, "instance initializer: unit = " + unit);
-            }
             double arc = 0.0;
             @Override
             public void run() {
                 // Send Data
-                byte b = (byte) (Math.sin(arc) * 127);
+                int data = (int) ((Math.sin(arc) + 1) / 2 * 255);
 //                Log.d(TAG, "run: b = " + b);
-                adapter.onReceiveData(b);
+                handler.obtainMessage(TEST_DATA, data, -1).sendToTarget();
                 arc += unit;
                 if (arc >= PI2) {
                     arc -= PI2;
+                    // 发送心率
+                    handler.obtainMessage(TEST_DATA, 0, -1).sendToTarget();
+                    handler.obtainMessage(TEST_DATA, 255, -1).sendToTarget();
+                    int rate = r.nextInt(256);
+                    handler.obtainMessage(TEST_DATA, rate, -1).sendToTarget();
                 }
                 handler.postDelayed(this, 5);
             }
         };
         handler.post(runnable);
+
     }
 
-    public String bytesString(byte[] bytes) {
-        if (bytes == null) {
-            return "";
-        }
-        StringBuilder sb = new StringBuilder();
-        sb.append("bytes:[");
-        for (int i = 0, len = bytes.length; i < len; i++) {
-            sb.append(bytes[i]);
-            if (i < len - 1) {
-                sb.append(",");
+    private void handleData(int i) {
+        if (i < 0) {
+            ecgViewAdapter.onReceiveData((byte) 0);
+        } else {
+            if (protocol.isHeartRate(i)) {
+                heartRateView.setText(String.valueOf(i));
+            } else {
+                byte b = intToByte(i);
+                ecgViewAdapter.onReceiveData(b);
             }
         }
-        sb.append("]");
-        return sb.toString();
     }
 
+    void initUtils() {
+        protocol = new HeartRateProtocolImpl(new HeartRateProtocol.OnReturnDataCallback() {
+            @Override
+            public void onData(int data1, int data2) {
+                if (data1 > -1) {
+                    ecgViewAdapter.onReceiveData(intToByte(data1));
+                }
+                if (data2 > -1) {
+                    ecgViewAdapter.onReceiveData(intToByte(data2));
+                }
+            }
+        });
+    }
 
     void initBT() {
         bt = new BluetoothSPP(MainActivity.this);
         bt.setOnByteReceivedListener(new BluetoothSPP.OnByteReceivedListener() {
             @Override
             public void onByteReceived(int i) {
-                if (i < 0) {
-                    adapter.onReceiveData((byte) 0);
-                } else {
-                    byte b = Common.intToByte(i);
-                    adapter.onReceiveData(b);
-                }
+                handleData(i);
             }
         });
         bt.setOnServiceStopListener(new BluetoothSPP.OnServiceStopListener() {
             @Override
             public void onServiceStop() {
-                if (adapter != null) {
-                    adapter.reset();
+                if (ecgViewAdapter != null) {
+                    ecgViewAdapter.reset();
                 }
+                heartRateView.setText("");
             }
         });
         bt.setBluetoothConnectionListener(new BluetoothSPP.BluetoothConnectionListener() {
@@ -190,9 +216,10 @@ public class MainActivity extends AppCompatActivity {
 
     void initViews() {
         ecgView = (ECGView) findViewById(R.id.ecg);
-        adapter = new ECGViewAdapterImpl(ecgView);
-        ecgView.setAdapter(adapter);
+        ecgViewAdapter = new ECGViewAdapterImpl(ecgView);
+        ecgView.setAdapter(ecgViewAdapter);
         container = (CoordinatorLayout) findViewById(R.id.container);
+        heartRateView = (TextView) findViewById(R.id.heart_rate);
     }
 
     void makeSnackbar(String message) {

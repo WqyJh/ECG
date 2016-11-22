@@ -86,7 +86,6 @@ public class ECGView extends View {
         if (adapter != null) {
             float left = originX;
             ListByte list = adapter.getList();
-            Log.d(TAG, "onDraw: " + (list == null ? 0 : list.size()));
             if (list != null) {
                 path.moveTo(left, originY - list.get(0) * dHeight);
                 for (int i = 1; i < list.size(); i++) {
